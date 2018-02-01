@@ -1,7 +1,7 @@
 from PyQt5.QtCore import QDir, QTranslator
 import resources
 
-
+# so duct taped #TODO: make it better
 class Translator():
 
     def __init__(self, index):

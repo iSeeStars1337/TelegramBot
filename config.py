@@ -1,6 +1,5 @@
 from PyQt5.QtCore import QSettings, QFile, QVariant
 
-
 class Config(QSettings):
     def __init__(self):
         super().__init__("config.ini", QSettings.IniFormat)
