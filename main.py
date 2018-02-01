@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QPushButton, QHBoxLayout, QLabel, QLineEdit,
                              QVBoxLayout, QGroupBox, QTabWidget)
-from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import Qt, pyqtSignal, pyqtSlot
+from PyQt5.QtGui import QIcon, QFont, QFontDatabase
+from PyQt5.QtCore import Qt, pyqtSignal, pyqtSlot, QSize
 import qdarkstyle
 import resources.resources as Res
 import constants
@@ -12,12 +12,11 @@ Res.qInitResources()
 
 class MainPage(QWidget):
 
-
     def __init__(self):
         super().__init__(flags=Qt.Widget)
 
         self.startButton = QPushButton('Start')
-        self.startButton.clicked.connect(self.startButtonPressed)
+        self.startButton.clicked.connect(self.start_button_pressed)
 
         main_layout = QHBoxLayout()
         main_layout.addWidget(self.startButton, alignment=Qt.AlignBottom)
@@ -25,7 +24,7 @@ class MainPage(QWidget):
         self.setLayout(main_layout)
         self.token_value = ''
 
-    def startButtonPressed(self):
+    def start_button_pressed(self):
         print(self.token_value)
 
     def make_connection(self, connected_object):
@@ -69,16 +68,30 @@ class MainWidget(QWidget):
         super().__init__(flags=Qt.Widget)
 
         self.tabs = QTabWidget()
+
         main_page = MainPage()
         settings_page = SettingsPage()
+
         main_page.make_connection(settings_page)
-        self.tabs.addTab(main_page, QIcon(":/home"), 'Home')
-        self.tabs.addTab(settings_page,QIcon(":/settings"), 'Settings')
+        # set icons to the tabs
+        self.create_icons()
+        self.tabs.addTab(main_page, self.home_icon, 'Home')
+        self.tabs.addTab(settings_page, self.settings_icon, 'Settings')
+        self.tabs.setIconSize(QSize(24, 24))
 
         main_layout = QHBoxLayout()
         main_layout.addWidget(self.tabs, alignment=Qt.Alignment())
         self.setLayout(main_layout)
 
+    def create_icons(self):
+
+        self.home_icon = QIcon()
+        self.home_icon.addFile(":/home_on", state=0)
+        self.home_icon.addFile(":/home_off", state=1)
+
+        self.settings_icon = QIcon()
+        self.settings_icon.addFile(":/settings_on", state=0)
+        self.settings_icon.addFile(":/settings_off", state=1)
 
 class MainWindow(QMainWindow):
 
@@ -101,5 +114,8 @@ def get_desktop_center(qapp):
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
+    fontDB = QFontDatabase()
+    fontId = fontDB.addApplicationFont(":/fonts/TitilliumWeb")
     mainWindow = MainWindow(get_desktop_center(app))
+    app.setFont(QFont("Titillium Web", 12, weight=QFont.Normal))
     sys.exit(app.exec_())
